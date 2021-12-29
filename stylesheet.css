@@ -1,0 +1,13 @@
+.icon-arrow-down {
+    background-image: url("icons/arrow-down.png");
+}
+
+.icon-arrow-up {
+    background-image: url("icons/arrow-up.png");
+}
+
+.icon-arrow-down, .icon-arrow-up {
+    background-size: 20px;
+    height: 20px;
+    width: 20px;
+}

@@ -1,0 +1,10 @@
+{
+    "name" : "SubBrightnessAdjuster",
+    "description" : "Lowers contrast.",
+    "shell-version" : [
+        "5.0"
+    ],
+    "url" : "",
+    "uuid" : "SubBrightnessAdjuster",
+    "version" : 1.0
+}
