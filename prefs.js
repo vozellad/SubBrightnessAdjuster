@@ -1,3 +1,12 @@
+// TODO:
+// 	allow user to change min and max
+// 	allow to change string format length
+//  allow user to set keyboard shortcuts for two buttons
+//  allow option to enable nightlight
+// 	add advanced tab for options that are less important
+// 	Actually finish writing this basic thing (more todo in comments below)
+
+/*
 const GObject = imports.gi.GObject
 const Gtk = imports.gi.Gtk
 
@@ -108,3 +117,4 @@ const MyPrefsWidget = new GObject.Class({
 
 	}
 })
+*/

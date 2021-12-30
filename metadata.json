@@ -1,10 +1,8 @@
 {
-    "name" : "SubBrightnessAdjuster",
-    "description" : "Lowers contrast.",
-    "shell-version" : [
-        "5.0"
-    ],
-    "url" : "",
-    "uuid" : "SubBrightnessAdjuster",
-    "version" : 1.0
+    "name": "SubBrightnessAdjuster",
+    "description": "Lowers brightness of display's colors. For when the display's brightness at its lowest is still too high.",
+    "shell-version": [ "5" ],
+    "url": "https://github.com/vozellad/SubBrightnessAdjuster",
+    "uuid": "SubBrightnessAdjuster",
+    "version": 1
 }
