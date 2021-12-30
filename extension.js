@@ -115,9 +115,7 @@ function changeBriInc() {
 	setAndOutBri()
 }
 
-function init() {}
-
-function enable() {
+function init() {
 	// code if users want it to be reset every time it's enabled
 	// currBri = initBri 
 	setBri(currBri)
@@ -163,7 +161,9 @@ function enable() {
 	// Adds event listener for buttons.
 	buttonDec.connect('button-press-event', changeBriDec)
 	buttonInc.connect('button-press-event', changeBriInc)
+}
 
+function enable() {
 	// Inserts elements in the gnome panel. 
 	// Elements get added to the left since the elements in the gnome 
 	// panel are right justified, so the left-most element is the 
@@ -183,22 +183,4 @@ function disable() {
 	
 	// Resets display's brightness.
 	setBri(1)
-
-	// Destroy global-scoped objects.
-	if (panelButton) {
-		panelButton.destroy()
-		panelButton = null
-	}
-	if (panelButtonText) {
-		panelButtonText.destroy()
-		panelButtonText = null
-	}
-	if (buttonDec) {
-		buttonDec.destroy()
-		buttonDec = null
-	}
-	if (buttonInc) {
-		buttonInc.destroy()
-		buttonInc = null
-	}
 }
