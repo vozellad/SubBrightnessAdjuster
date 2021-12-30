@@ -1,8 +1,8 @@
 {
     "name": "SubBrightnessAdjuster",
-    "description": "Lowers brightness of display's colors. For when the display's brightness at its lowest is still too high.",
-    "shell-version": [ "5" ],
+    "uuid": "SubBrightnessAdjuster@vozellad.github.io",
+    "description": "Lowers brightness of display's colors.\nFor when the display's brightness at its lowest is still too high.\nThis is unfinished but functional.",
+    "shell-version": [ "3.38.4" ],
     "url": "https://github.com/vozellad/SubBrightnessAdjuster",
-    "uuid": "SubBrightnessAdjuster",
     "version": 1
 }

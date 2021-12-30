@@ -115,7 +115,9 @@ function changeBriInc() {
 	setAndOutBri()
 }
 
-function init() {
+function init() {}
+
+function enable() {
 	// code if users want it to be reset every time it's enabled
 	// currBri = initBri 
 	setBri(currBri)
@@ -126,7 +128,7 @@ function init() {
 	})
 	panelButtonText = new St.Label({
 		style_class: "exchangePanelText",
-		text: getBriStrFormatted() + "  test",
+		text: getBriStrFormatted(),
 		y_align: Clutter.ActorAlign.CENTER
 	})
 	panelButton.set_child(panelButtonText)
@@ -161,9 +163,7 @@ function init() {
 	// Adds event listener for buttons.
 	buttonDec.connect('button-press-event', changeBriDec)
 	buttonInc.connect('button-press-event', changeBriInc)
-}
 
-function enable() {
 	// Inserts elements in the gnome panel. 
 	// Elements get added to the left since the elements in the gnome 
 	// panel are right justified, so the left-most element is the 
@@ -172,8 +172,6 @@ function enable() {
 	Main.panel._rightBox.insert_child_at_index(panelButton, 0)
 	Main.panel._rightBox.insert_child_at_index(buttonDec, 0)
 
-	// code if users want it to be reset every time it's enabled
-	// currBri = initBri 
 	setAndOutBri(currBri)
 }
 
@@ -185,4 +183,22 @@ function disable() {
 	
 	// Resets display's brightness.
 	setBri(1)
+
+	// Destroy global-scoped objects.
+	if (panelButton) {
+		panelButton.destroy()
+		panelButton = null
+	}
+	if (panelButtonText) {
+		panelButtonText.destroy()
+		panelButtonText = null
+	}
+	if (buttonDec) {
+		buttonDec.destroy()
+		buttonDec = null
+	}
+	if (buttonInc) {
+		buttonInc.destroy()
+		buttonInc = null
+	}
 }
