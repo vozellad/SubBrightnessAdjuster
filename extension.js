@@ -1,12 +1,9 @@
-// TODO:
-//	
-
-/*	UNFINISHED
+/*	
 	Lowers brightness of display's colors. 
 	For when the display's brightness at its lowest is still too high.
 
 	Date created: 2021/12/26
-	Date last modified: 2021/12/29
+	Date last modified: 2022/1/1
 	
 	Output: The extension places three elements in the gnome panel. 
 		There's a decimal that shows the brightness level. 
@@ -20,125 +17,106 @@
 
 	Input: The text showing the brightness level doesn't take input.
 		The left and right button decrement and increment 
-		the brightness level, respectively. 
-
-	If you're wondering why there are so many comments, 
-	it's how I was taught in school, 
-	and I don't yet know how to scale it down 
-	without failing to explain things I need to.
+		the brightness level, respectively.
 */
 
 'use strict'
+
 const St = imports.gi.St
 const Main = imports.ui.main
 const Util = imports.misc.util
 const Clutter = imports.gi.Clutter
 
-// Label to show brightness amount
-let panelButton, panelButtonText
-// Decrement and increment buttons 
-// on each side of the brightness amount.
-let buttonDec, buttonInc
-// Initial brightness amount 
-// when extension starts(different from enabled).
-const initBri = 0.5
+// Show brightness amount.
+let label
+let labelText
+
+// Decrement and increment buttons.
+let buttonDec // Left of label.
+let buttonInc // Right of label.
+
 // Holds current brightness amount. Changes based on user input.
-let currBri = initBri // would make not global, but I'm having trouble 
-					  // passing parameters to lambdas
-	// Maybe shouldn't be global, but I don't really know yet.
+let currBri = 0.5
 
-// Function that calls function to make terminal command. 
-// 0 is off, 1 is default.
-// Command sets display's brightness at given amount. 
-function setBri(currBri) {
-	Util.spawnCommandLine("xrandr --output eDP --brightness " + currBri)
-}
+// Brightness values.
+const incAmtBri = 0.05 // increment amount
+const maxBri = 1
+const minBri = 0.3
 
-// Formats current brightness as a string with at least 4 characters.
-function getBriStrFormatted() {
+// Changes and outputs brightness.
+// Parameter: 0 is off. 1 is full. Default is current brightness.
+function applyBri(newBri = currBri) {
+	// Change display color's brightness via terminal command.
+	Util.spawnCommandLine("xrandr --output eDP --brightness " + newBri)
+
+	// Formats current brightness as a string with at least 4 characters.
 	let currBriStr = currBri.toString()
-
+	
 	// Makes whole numbers decimals with leading 0's to fit the format. 
 	if (!currBriStr.includes("."))
 		currBriStr += ".00"
-
-	// Adds 0's until str is 4 characters   unless str length is >= 4
+	
+	// Adds enough 0's to make it at least 4 characters.
 	for (let i = 0; i < (4 - currBriStr.length); i++)
 		currBriStr += "0"
 
-	return currBriStr
+	// Updates panel-button with current brightness value.
+	labelText.text = currBriStr
 }
 
-// don't know how to do lambda with parameter, so I made two functions.
-// trying to reduce repetition by having this function 
-// be used by both changeBri functions. I feel like it's not worth it.
-// Idk. I'm learning. 
-// Sets and outputs brightness.
-function setAndOutBri() {
-	setBri(currBri)
-	panelButtonText.text = getBriStrFormatted()
-}
 // Decrements brightness.
-function changeBriDec() {
+function decBri() {
 	// Limits range.
-	if (currBri <= 0.3)
-		// Sets number to min to disallow going below the min.
-		currBri = 0.3
-	// Decrementing, but just in case it's over the max.
-	else if (currBri > 1)
-		currBri = 1
-	// Decrements brightness by the intended amount.
+	// Prevents going below the min.
+	if (currBri <= minBri)
+		currBri = minBri
+	// To be safe.
+	else if (currBri > maxBri)
+		currBri = maxBri
+	// Decrements brightness.
 	else
-	{
-		currBri -= 0.05
-		currBri = parseFloat(currBri.toFixed(2))
-	}
+		currBri = parseFloat((currBri - incAmtBri).toFixed(2))
 
-	setAndOutBri()
+	applyBri()
 }
+
 // Increments brightness.
-function changeBriInc() {
+function incBri() {
 	// Limits range.
-	// Increments, but just in case it's below the min.
-	if (currBri < 0.3)
-		currBri = 0.3
-	else if (currBri >= 1)
-		// Sets number to max to disallow going above the max.
-		currBri = 1
-	// Increments brightness by the intended amount.
+	// To be safe.
+	if (currBri < minBri)
+		currBri = minBri
+	// Prevents going above the max.
+	else if (currBri >= maxBri)
+		currBri = maxBri
+	// Increments brightness.
 	else
-	{
-		currBri += 0.05
-		currBri = parseFloat(currBri.toFixed(2))
-	}
+		currBri = parseFloat((currBri + incAmtBri).toFixed(2))
 
-	setAndOutBri()
+	applyBri()
 }
 
-function init() {
-	// code if users want it to be reset every time it's enabled
-	// currBri = initBri 
-	setBri(currBri)
-
+function enable() {
 	// Label to show brightness amount.
-	panelButton = new St.Bin({
+	label = new St.Bin({
 		style_class: "panel-button"
 	})
-	panelButtonText = new St.Label({
+	labelText = new St.Label({
 		style_class: "exchangePanelText",
-		text: getBriStrFormatted(),
+		text: " N/A",
 		y_align: Clutter.ActorAlign.CENTER
 	})
-	panelButton.set_child(panelButtonText)
+	label.set_child(labelText)
 
-	// Decrement and increment buttons 
-	// on each side of the brightness amount.
+	// Decrement and increment buttons.
+	// Left of label.
 	buttonDec = new St.Bin({
 		style_class: 'panel-button',
 		reactive: true,
 		can_focus: true,
 		track_hover: true
 	})
+	// Right of label.
 	buttonInc = new St.Bin({
 		style_class: 'panel-button',
 		reactive: true,
@@ -147,40 +125,35 @@ function init() {
 	})
 
 	// Get button's visual appearance.
-	let iconL = new St.Icon({
+	let iconDec = new St.Icon({
 		style_class: 'icon-arrow-down'
 	})
-	let iconR = new St.Icon({
+	let iconInc = new St.Icon({
 		style_class: 'icon-arrow-up'
 	})
 
 	// Connects icons to associated buttons.
-	buttonDec.set_child(iconL)
-	buttonInc.set_child(iconR)
+	buttonDec.set_child(iconDec)
+	buttonInc.set_child(iconInc)
 
 	// Adds event listener for buttons.
-	buttonDec.connect('button-press-event', changeBriDec)
-	buttonInc.connect('button-press-event', changeBriInc)
-}
+	buttonDec.connect('button-press-event', decBri)
+	buttonInc.connect('button-press-event', incBri)
 
-function enable() {
-	// Inserts elements in the gnome panel. 
-	// Elements get added to the left since the elements in the gnome 
-	// panel are right justified, so the left-most element is the 
-	// bottom one written in code. 
+	// Inserts elements in gnome panel.
 	Main.panel._rightBox.insert_child_at_index(buttonInc, 0)
-	Main.panel._rightBox.insert_child_at_index(panelButton, 0)
+	Main.panel._rightBox.insert_child_at_index(label, 0)
 	Main.panel._rightBox.insert_child_at_index(buttonDec, 0)
 
-	setAndOutBri(currBri)
+	applyBri(currBri)
 }
 
 function disable() {
 	// Removes elements in gnome panel. 
 	Main.panel._rightBox.remove_child(buttonDec)
-	Main.panel._rightBox.remove_child(panelButton)
+	Main.panel._rightBox.remove_child(label)
 	Main.panel._rightBox.remove_child(buttonInc)
 	
 	// Resets display's brightness.
-	setBri(1)
+	applyBri(1)
 }
