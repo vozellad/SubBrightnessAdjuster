@@ -1,3 +1,7 @@
+// TODO:
+// 	Remove buttons. Make panel-button a button that opens a panel-menu. 
+// 	In the menu is a slider that replaces the buttons.
+
 /*	
 	Lowers brightness of display's colors. 
 	For when the display's brightness at its lowest is still too high.
